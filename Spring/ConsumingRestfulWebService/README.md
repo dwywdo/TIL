@@ -89,3 +89,100 @@
       }
     }
     ```
+
+    - @JsonIgnoreProperties: Jackson Library로 하여금 이 데이터 타입과 바인딩되지 않은 어떤 Propertiy도 모두 무시하겠다는 의미
+    - Custom Data Type에 데이터를 직접 바인딩하기 위해서는?
+      - 변수의 이름이 무조건 API에서 반환되는 JSON의 key값과 동일해야 한다
+      - 만약 동일하지 않으면, @JsonProperty 어노테이션을 이용해 정확한 키의 값을 지정해 줄 수 있다.
+      - 이 예제에서는 모든 변수의 이름을 JSON key와 동일하게 맞추어 해당 어노테이션이 필요없도록 하였다
+    - 추가적으로 JSON 데이터의 value key에 해당하는 또 다른 커스텀 데이터 타입을 정의하자
+
+      - src/main/java/com/example/consumingrest/Value.java
+
+      ```java
+      package com.example.consumingrest;
+      import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+      @JsonIgnoreProperties(ignoreUnknown = true)
+      public class Value {
+        private Long id;
+        private String quote;
+        public Value() {
+        }
+        public Long getId() {
+          return this.id;
+        }
+        public String getQuote() {
+          return this.quote;
+        }
+        public void setId(Long id) {
+          this.id = id;
+        }
+        public void setQuote(String quote) {
+          this.quote = quote;
+        }
+        @Override
+        public String toString() {
+          return "Value{" +
+              "id=" + id +
+              ", quote='" + quote + '\'' +
+              '}';
+        }
+      }
+      ```
+
+##### Step 3. Finishing the Application
+
+---
+
+- Initializer를 통해 프로젝트를 생성했다면 main() 메소드를 살펴보자.
+- 기본적으로 Spring Web Application을 로드하는 코드만 있을 것이다
+- Quotation을 확인하기 위해! 아래와 같은 기능들이 추가적으로 필요하다
+  - A logger: 로그를 출력 (이 예제에서는 콘솔)
+  - CommandLineRunner: 어플리케이션 초기화 시 RestTemplate을 실행
+- 아래와 같이 수정해보자
+
+  ```java
+  package com.example.consumingrest;
+
+  import org.slf4j.Logger;
+  import org.slf4j.LoggerFactory;
+  import org.springframework.boot.CommandLineRunner;
+  import org.springframework.boot.SpringApplication;
+  import org.springframework.boot.autoconfigure.SpringBootApplication;
+  import org.springframework.boot.web.client.RestTemplateBuilder;
+  import org.springframework.context.annotation.Bean;
+  import org.springframework.web.client.RestTemplate;
+
+  @SpringBootApplication
+  public class ConsumingRestApplication {
+
+    private static final Logger log = LoggerFactory.getLogger(ConsumingRestApplication.class);
+
+    public static void main(String[] args) {
+      SpringApplication.run(ConsumingRestApplication.class, args);
+    }
+
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+      return builder.build();
+    }
+
+    @Bean
+    public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
+      return args -> {
+        Quote quote = restTemplate.getForObject(
+            "https://gturnquist-quoters.cfapps.io/api/random", Quote.class);
+        log.info(quote.toString());
+      };
+    }
+  }
+  ```
+
+##### Step 4. Running the Application
+
+---
+
+- Gradle을 사용한 프로젝트
+  ```bash
+  ./gradlew bootRun
+  ```

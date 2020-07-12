@@ -24,7 +24,7 @@
 - Spring Initializer 사용!
 - 설정 캡처
 
-  ![Init](./consuming-rest.png)
+  ![Init](./spring-redis.png)
 
 - Gradle로 빌드 시스템을 구성하여 프로젝트를 생성하였으므로, 프로젝트 내에는 build.gradle이 생겼을 것이다
 

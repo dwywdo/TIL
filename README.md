@@ -6,3 +6,7 @@
   - [Building Java Projects with Maven](https://spring.io/guides/gs/gradle/)
   - [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
   - [Consuming a Restful Web Service](https://spring.io/guides/gs/consuming-rest/)
+  - [Accessing Data With JPA](https://spring.io/guides/gs/accessing-data-jpa/)
+  - [Accessing Data With MySQL](https://spring.io/guides/gs/accessing-data-mysql/)
+  - [Building Application With Spring Boot](https://spring.io/guides/gs/spring-boot/)
+  - [Messaging With Redis](https://spring.io/guides/gs/messaging-redis/)

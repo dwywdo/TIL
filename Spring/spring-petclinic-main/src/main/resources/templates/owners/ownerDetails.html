@@ -26,6 +26,11 @@
         <th>Telephone</th>
         <td th:text="*{telephone}"></td>
       </tr>
+      <tr>
+        <th>Age</th>
+        <!--Thymeleaf에서 새로 추가된 age 변수에 접근하기 위해서는 Getter / Setter가 필요하다 -->
+        <td th:text="*{age}"></td>
+      </tr>
     </table>
   
     <a th:href="@{{id}/edit(id=${owner.id})}" class="btn btn-default">Edit

@@ -55,7 +55,7 @@ class OwnerController {
 		dataBinder.setDisallowedFields("id");
 	}
 
-	// 홈페이지에서 새로고침하였을 때, 로그로부터 이 메소드가 실행됨을 확인할 수 있다
+	// 홈페이지에서 오너 추가하였을 때, 로그로부터 이 메소드가 실행됨을 확인할 수 있다
 	// DispatcherServlet이 GetMapping Annotation을 통해서 실행해주는 것
 	@GetMapping("/owners/new")
 	public String initCreationForm(Map<String, Object> model) {
@@ -90,12 +90,13 @@ class OwnerController {
 	public String processFindForm(Owner owner, BindingResult result, Map<String, Object> model) {
 
 		// allow parameterless GET request for /owners to return all records
-		if (owner.getLastName() == null) {
-			owner.setLastName(""); // empty string signifies broadest possible search
+		if (owner.getFirstName() == null) {
+			owner.setFirstName(""); // empty string signifies broadest possible search
 		}
 
 		// find owners by last name
-		Collection<Owner> results = this.owners.findByLastName(owner.getLastName());
+		// Modified to find by first name
+		Collection<Owner> results = this.owners.findByFirstName(owner.getFirstName());
 		if (results.isEmpty()) {
 			// no owners found
 			result.rejectValue("lastName", "notFound", "not found");

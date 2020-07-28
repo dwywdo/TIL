@@ -58,6 +58,7 @@ class OwnerController {
 	// 홈페이지에서 오너 추가하였을 때, 로그로부터 이 메소드가 실행됨을 확인할 수 있다
 	// DispatcherServlet이 GetMapping Annotation을 통해서 실행해주는 것
 	@GetMapping("/owners/new")
+	@LogExecutionTime
 	public String initCreationForm(Map<String, Object> model) {
 		Owner owner = new Owner();
 		model.put("owner", owner);
@@ -68,6 +69,7 @@ class OwnerController {
 
 	// Submit 버튼을 눌렀을 때 Post 요청
 	@PostMapping("/owners/new")
+	@LogExecutionTime
 	public String processCreationForm(@Valid Owner owner, BindingResult result) {
 		if (result.hasErrors()) {
 			return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
@@ -81,12 +83,14 @@ class OwnerController {
 	}
 
 	@GetMapping("/owners/find")
+	@LogExecutionTime
 	public String initFindForm(Map<String, Object> model) {
 		model.put("owner", new Owner());
 		return "owners/findOwners";
 	}
 
 	@GetMapping("/owners")
+	@LogExecutionTime
 	public String processFindForm(Owner owner, BindingResult result, Map<String, Object> model) {
 
 		// allow parameterless GET request for /owners to return all records
@@ -115,6 +119,7 @@ class OwnerController {
 	}
 
 	@GetMapping("/owners/{ownerId}/edit")
+	@LogExecutionTime
 	public String initUpdateOwnerForm(@PathVariable("ownerId") int ownerId, Model model) {
 		Owner owner = this.owners.findById(ownerId);
 		model.addAttribute(owner);
@@ -122,6 +127,7 @@ class OwnerController {
 	}
 
 	@PostMapping("/owners/{ownerId}/edit")
+	@LogExecutionTime
 	public String processUpdateOwnerForm(@Valid Owner owner, BindingResult result,
 			@PathVariable("ownerId") int ownerId) {
 		if (result.hasErrors()) {
@@ -141,6 +147,7 @@ class OwnerController {
 	 */
 	// 버튼을 통한 Owner 생성 후의 과정
 	@GetMapping("/owners/{ownerId}")
+	@LogExecutionTime
 	public ModelAndView showOwner(@PathVariable("ownerId") int ownerId) {
 		// ModelAndView를 생성 후 View 이름 지정
 		ModelAndView mav = new ModelAndView("owners/ownerDetails");

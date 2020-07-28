@@ -11,4 +11,5 @@ public class Store {
 	public void buySomething(int amount) {
 		payment.pay(amount);
 	}
+
 }

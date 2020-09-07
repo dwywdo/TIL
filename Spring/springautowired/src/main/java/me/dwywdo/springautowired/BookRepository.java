@@ -1,7 +1,5 @@
 package me.dwywdo.springautowired;
 
-import org.springframework.stereotype.Repository;
+public interface BookRepository {
 
-@Repository
-public class BookRepository {
 }

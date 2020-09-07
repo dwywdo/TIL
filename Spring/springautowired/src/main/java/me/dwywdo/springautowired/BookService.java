@@ -9,7 +9,7 @@ public class BookService {
     BookRepository bookRepository;
 
     @Autowired
-    public BookService(BookRepository bookRepository) {
+    public void setBookRepository(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 }

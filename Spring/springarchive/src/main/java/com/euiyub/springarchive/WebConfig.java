@@ -9,13 +9,16 @@ import com.euiyub.springarchive.EventConverter.StringToEventConverter;
 
 /**
  * Java web config for Spring MVC without Spring Boot
+ * This is actually not necessary when using Spring Boot
+ * Spring Boot automatically registers converters / formatters if it's registred as beans
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new StringToEventConverter());
-        registry.addConverter(new EventToStringConverter());
+        // registry.addConverter(new StringToEventConverter());
+        // registry.addConverter(new EventToStringConverter());
+        registry.addFormatter(new EventFormatter());
     }
 }

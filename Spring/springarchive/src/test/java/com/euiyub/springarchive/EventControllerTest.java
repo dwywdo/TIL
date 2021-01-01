@@ -13,9 +13,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+/**
+ * EventFormatter.class or EventConverter.StringToEventConverter
+ * should be registered as bean(using @Component, etc)
+ *
+ */
 @RunWith(SpringRunner.class)
-@WebMvcTest
-public class EventControllerTest {
+@WebMvcTest({EventFormatter.class, EventController.class}) // It's ok to omit
+// @WebMvcTest({EventConverter.StringToEventConverter.class, EventController.class})
+class EventControllerTest {
 
     @Autowired
     MockMvc mockMvc;

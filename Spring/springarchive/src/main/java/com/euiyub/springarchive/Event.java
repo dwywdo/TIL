@@ -7,6 +7,10 @@ import javax.validation.constraints.NotEmpty;
 public class Event {
     Integer id;
 
+    public Event(Integer id) {
+        this.id = id;
+    }
+
     @NotEmpty
     String title; // Should not be null
 
@@ -46,5 +50,15 @@ public class Event {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+               "id=" + id +
+               ", title='" + title + '\'' +
+               ", limit=" + limit +
+               ", email='" + email + '\'' +
+               '}';
     }
 }

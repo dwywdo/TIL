@@ -28,7 +28,7 @@ public class AppRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         EventValidator eventValidator = new EventValidator();
-        Event event = new Event();
+        Event event = new Event(1);
         event.setLimit(-1);
         event.setEmail("aaa2");
         Errors errors = new BeanPropertyBindingResult(event, "event");

@@ -12,10 +12,10 @@ public class EventValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", "notempty", "Empty title is not allowed");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", "notempty", "Empty title is not allowed 1");
         Event event = (Event) target; // Does not support Generic, yet.
         if(event.getTitle() == null) {
-            errors.reject("notempty", "Empty title is not allowed");
+            errors.reject("notempty", "Empty title is not allowed 2");
             // errors.rejectValue: Rejection for a specific field of instance.
         }
         // errorCode(notempty) is key value for resolving message by application context

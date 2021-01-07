@@ -1,9 +1,12 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'org.springframework.boot' version '2.4.1'
+    id 'maven-publish'
 }
 
-group 'me.dwywdo'
+bootJar { mainClassName = 'NONE' }
+
+group 'you.dwywdo'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -12,8 +15,8 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    implementation('org.springframework.boot:spring-boot-starter-web')
-    implementation('you.dwywdo:your-spring-boot-starter:1.0-SNAPSHOT')
+    compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure'
+    compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure-processor'
 }
 
 apply plugin : 'org.springframework.boot'

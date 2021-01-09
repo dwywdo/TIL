@@ -17,6 +17,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure'
     compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure-processor'
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 }
 
 apply plugin : 'org.springframework.boot'

@@ -22,11 +22,17 @@ public class SampleRunner implements ApplicationRunner {
      */
     @Autowired
     MyProperties myProperties;
+
+    @Autowired
+    private String hello;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         System.out.println(myProperties.getName());
         System.out.println(myProperties.getAge());
         System.out.println(myProperties.getFullName());
         System.out.println(myProperties.getSessionTimeout());
+
+        System.out.println(hello);
     }
 }

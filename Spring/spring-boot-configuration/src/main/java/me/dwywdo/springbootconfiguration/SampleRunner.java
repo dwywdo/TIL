@@ -1,5 +1,7 @@
 package me.dwywdo.springbootconfiguration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -20,6 +22,9 @@ public class SampleRunner implements ApplicationRunner {
     private String fullName;
 
      */
+
+    private Logger logger = LoggerFactory.getLogger(SampleRunner.class);
+
     @Autowired
     MyProperties myProperties;
 
@@ -28,11 +33,16 @@ public class SampleRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        System.out.println(myProperties.getName());
-        System.out.println(myProperties.getAge());
-        System.out.println(myProperties.getFullName());
-        System.out.println(myProperties.getSessionTimeout());
+        logger.debug("=================");
+        logger.debug(hello);
+        logger.debug(myProperties.getName());
+        logger.debug(myProperties.getFullName());
+        logger.debug("=================");
 
-        System.out.println(hello);
+//        System.out.println(myProperties.getName());
+//        System.out.println(myProperties.getAge());
+//        System.out.println(myProperties.getFullName());
+//        System.out.println(myProperties.getSessionTimeout());
+//        System.out.println(hello);
     }
 }

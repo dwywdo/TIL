@@ -1,0 +1,16 @@
+body { 
+    background-color: peru;
+}
+
+.btn {
+    cursor: pointer;
+
+}
+h1 {
+    color:powderblue;
+    transition: color .5s ease-in-out
+}
+
+.clicked {
+    color:green
+}

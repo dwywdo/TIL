@@ -8,15 +8,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ValidateRequestBodyController {
-    @PostMapping("/validateBody")
-    OutputResponse validateBody(@Valid @RequestBody InputRequest request) {
-        OutputResponse response = new OutputResponse();
+public class ValidateController {
+    @PostMapping("/validateRequestBody")
+    ResponseEntity<String> validateRequestBody(@Valid @RequestBody InputRequest request) {
+        return ResponseEntity.ok("Valid");
+    }
 
-        response.setNumberBetweenOneAndTen(request.getNumberBetweenOneAndTen());
-        response.setNotEmptyString(request.getNotEmptyString());
-        response.setPinCode(request.getPinCode());
-
+    @PostMapping("/validateResponseBody")
+    OutputResponse validateResponseBody(@RequestBody InputRequest request) {
+        OutputResponse response = new OutputResponse(request.getNumberBetweenOneAndTen(),
+                                                     null,
+                                                     request.getPinCode());
         return response;
     }
 }

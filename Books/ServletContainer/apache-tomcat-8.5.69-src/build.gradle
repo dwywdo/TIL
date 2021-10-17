@@ -1,0 +1,28 @@
+group 'org.apache.tomcat'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        java.srcDir('java')
+        resources.srcDir('java')
+    }
+}
+
+dependencies {
+    compile group: 'org.apache.ant', name: 'ant', version: '1.10.1'
+    compile group: 'wsdl4j', name: 'wsdl4j', version: '1.6.3'
+    compile group: 'javax.xml', name: 'jaxrpc-api', version: '1.1'
+    compile group: 'org.eclipse.jdt.core.compiler', name: 'ecj', version: '4.6.1'
+
+    implementation 'tomcat:jasper-compiler:5.5.23'
+    implementation 'tomcat:jasper-compiler-jdt:5.5.23'
+}

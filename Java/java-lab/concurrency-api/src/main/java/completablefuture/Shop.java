@@ -7,6 +7,10 @@ import java.util.concurrent.Future;
 public class Shop {
     private final String name;
 
+    public String getName() {
+        return name;
+    }
+
     public Shop(String name) {
         this.name = name;
     }

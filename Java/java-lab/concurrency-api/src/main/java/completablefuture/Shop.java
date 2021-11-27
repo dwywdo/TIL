@@ -29,6 +29,12 @@ public class Shop {
         return String.format("%s:%.2f:%s", name, price, code);
     }
 
+    public String getPriceAsStringWithRandomDelay(String product) {
+        double price = calculatePriceWithRandomDelay(product);
+        Code code = Code.values()[random.nextInt(Code.values().length)];
+        return String.format("%s:%.2f:%s", name, price, code);
+    }
+
     public Future<Double> getPriceAsync(String product) {
         CompletableFuture<Double> futurePrice = new CompletableFuture<>();
         new Thread( () -> {
@@ -72,11 +78,25 @@ public class Shop {
         return random.nextDouble() * product.charAt(0) + product.charAt(1);
     }
 
+    private double calculatePriceWithRandomDelay(String product) {
+        randomDelay();
+        return random.nextDouble() * product.charAt(0) + product.charAt(1);
+    }
+
     public static void delay() {
         try {
             Thread.sleep(1000L);
         } catch (InterruptedException e) {
            throw new RuntimeException(e);
+        }
+    }
+
+    private void randomDelay() {
+        int delay = 500 + random.nextInt(2000);
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }

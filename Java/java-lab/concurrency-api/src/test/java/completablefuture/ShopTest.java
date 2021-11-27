@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
@@ -222,6 +223,39 @@ class ShopTest {
         System.out.println("Price: " + calculatedPrice + ", Done in " + duration + " msecs");
     }
 
+    @Test
+    void reactingToCompletableFutureCompletion_allOf() {
+        List<Shop> shops = Arrays.asList(
+                new Shop("BestShop"),
+                new Shop("LetsSaveBig"),
+                new Shop("MyFavoriteShop"),
+                new Shop("BuyItAll")
+        );
+        long start = System.nanoTime();
+        CompletableFuture[] futures = findPricesStream("myPhone27S", shops)
+                .map(f -> f.thenAccept(System.out::println))
+                .toArray(size -> new CompletableFuture[size]);
+        CompletableFuture.allOf(futures).join();
+        System.out.println("All shops have now responded in " + ((System.nanoTime() - start) / 1_000_000) + " msecs");
+    }
+
+
+    @Test
+    void reactingToCompletableFutureCompletion_anyOf() {
+        List<Shop> shops = Arrays.asList(
+                new Shop("BestShop"),
+                new Shop("LetsSaveBig"),
+                new Shop("MyFavoriteShop"),
+                new Shop("BuyItAll")
+        );
+        long start = System.nanoTime();
+        CompletableFuture[] futures = findPricesStream("myPhone27S", shops)
+                .map(f -> f.thenAccept(System.out::println))
+                .toArray(size -> new CompletableFuture[size]);
+        CompletableFuture.anyOf(futures).join();
+        System.out.println("Fastest shops have now responded in " + ((System.nanoTime() - start) / 1_000_000) + " msecs");
+    }
+
     /**
      * 일반적인 스트림을 통해 여러 Shop에 호출 (Sequentially)
      */
@@ -337,6 +371,29 @@ class ShopTest {
         return priceFutures.stream()
                            .map(CompletableFuture::join)
                            .collect(toList());
+    }
+
+    public Stream<CompletableFuture<String>> findPricesStream(String product, List<Shop> shops) {
+        final Executor executor =
+                Executors.newFixedThreadPool(Math.min(shops.size(), 100),
+                                             new ThreadFactory() {
+                                                 @Override
+                                                 public Thread newThread(Runnable r) {
+                                                     Thread t = new Thread(r);
+                                                     t.setDaemon(true);
+                                                     return t;
+                                                 }
+                                             });
+        return shops.stream()
+                .map(shop -> CompletableFuture.supplyAsync(
+                        () -> shop.getPriceAsStringWithRandomDelay(product), executor
+                ))
+                .map(future -> future.thenApply(Quote::parse))
+                .map(future -> future.thenCompose(
+                        quote -> CompletableFuture.supplyAsync(
+                                () -> Discount.applyDiscount(quote), executor
+                        )
+                ));
     }
 
     private static void doSomethingElse() {

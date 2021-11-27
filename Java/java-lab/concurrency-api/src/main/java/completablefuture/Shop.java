@@ -4,6 +4,8 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
+import completablefuture.Discount.Code;
+
 public class Shop {
     private final String name;
 
@@ -19,6 +21,12 @@ public class Shop {
 
     public double getPrice(String product) {
         return calculatePrice(product);
+    }
+
+    public String getPriceAsString(String product) {
+        double price = calculatePrice(product);
+        Code code = Code.values()[random.nextInt(Code.values().length)];
+        return String.format("%s:%.2f:%s", name, price, code);
     }
 
     public Future<Double> getPriceAsync(String product) {

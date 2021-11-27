@@ -173,6 +173,37 @@ class ShopTest {
         System.out.println("Done in " + duration + " msecs");
     }
 
+    @Test
+    void useSyncApiForMultipleShopAndApplyDiscount() {
+        List<Shop> shops = Arrays.asList(
+                new Shop("BestShop"),
+                new Shop("LetsSaveBig"),
+                new Shop("MyFavoriteShop"),
+                new Shop("BuyItAll"),
+                new Shop("DontWaitJustBuy")
+        );
+
+        long start = System.nanoTime();
+        System.out.println(findDiscountedPrices("myPhone27S", shops));
+        long duration = (System.nanoTime() - start) / 1_000_000;
+        System.out.println("Done in " + duration + " msecs");
+    }
+
+    @Test
+    void useSyncApiForMultipleShopAndApplyDiscountWithFutures() {
+        List<Shop> shops = Arrays.asList(
+                new Shop("BestShop"),
+                new Shop("LetsSaveBig"),
+                new Shop("MyFavoriteShop"),
+                new Shop("BuyItAll")
+        );
+
+        long start = System.nanoTime();
+        System.out.println(findDiscountedPricesWithFutures("myPhone27S", shops));
+        long duration = (System.nanoTime() - start) / 1_000_000;
+        System.out.println("Done in " + duration + " msecs");
+    }
+
     /**
      * 일반적인 스트림을 통해 여러 Shop에 호출 (Sequentially)
      */
@@ -252,6 +283,43 @@ class ShopTest {
                     .collect(toList());
     }
 
+    private static List<String> findDiscountedPrices(String product, List<Shop> shops) {
+        return shops.stream()
+                .map(shop -> shop.getPriceAsString(product))
+                .map(Quote::parse)
+                .map(Discount::applyDiscount)
+                .collect(toList());
+    }
+
+    private static List<String> findDiscountedPricesWithFutures(String product, List<Shop> shops) {
+        final Executor executor =
+                Executors.newFixedThreadPool(Math.min(shops.size(), 100),
+                                             new ThreadFactory() {
+                                                 @Override
+                                                 public Thread newThread(Runnable r) {
+                                                     Thread t = new Thread(r);
+                                                     t.setDaemon(true);
+                                                     return t;
+                                                 }
+                                             });
+
+        List<CompletableFuture<String>> priceFutures =
+                shops.stream()
+                     .map(shop -> CompletableFuture.supplyAsync(
+                             () -> shop.getPriceAsString(product), executor
+                     ))
+                     .map(future -> future.thenApply(Quote::parse))
+                     .map(future -> future.thenCompose(quote ->
+                                                               CompletableFuture.supplyAsync(
+                                                                       () -> Discount.applyDiscount(quote),
+                                                                       executor
+                                                               )))
+                     .collect(toList());
+
+        return priceFutures.stream()
+                           .map(CompletableFuture::join)
+                           .collect(toList());
+    }
     private static void doSomethingElse() {
         System.out.println("I'm doing something else..!!");
     }

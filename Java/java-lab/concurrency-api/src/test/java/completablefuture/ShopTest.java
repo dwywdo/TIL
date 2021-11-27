@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import completablefuture.ExchangeService.Money;
+
 class ShopTest {
     @Test
     void checkThreadPoolSize() {
@@ -204,6 +206,22 @@ class ShopTest {
         System.out.println("Done in " + duration + " msecs");
     }
 
+    @Test
+    void calculatePriceWithCurrencyRatio() throws ExecutionException, InterruptedException {
+        Shop shop = new Shop("BestShop");
+        long start = System.nanoTime();
+        Future<Double> futurePriceInUSD =
+                CompletableFuture.supplyAsync(() -> shop.getPrice("myPhone27S"))
+                                 .thenCombine(
+                                         CompletableFuture.supplyAsync(
+                                                 () -> ExchangeService.getRate(Money.EUR, Money.USD)
+                                         ), (price, rate) -> price * rate
+                                 );
+        double calculatedPrice = futurePriceInUSD.get();
+        long duration = (System.nanoTime() - start) / 1_000_000;
+        System.out.println("Price: " + calculatedPrice + ", Done in " + duration + " msecs");
+    }
+
     /**
      * 일반적인 스트림을 통해 여러 Shop에 호출 (Sequentially)
      */
@@ -320,6 +338,7 @@ class ShopTest {
                            .map(CompletableFuture::join)
                            .collect(toList());
     }
+
     private static void doSomethingElse() {
         System.out.println("I'm doing something else..!!");
     }

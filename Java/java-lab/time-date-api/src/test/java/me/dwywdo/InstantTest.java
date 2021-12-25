@@ -51,4 +51,12 @@ public class InstantTest {
         System.out.println("Pseudo max epochMillis = " + milliseconds);
         System.out.println("Pseudo max Instant = " + pseudoMaxInstant);
     }
+
+    @Test
+    void getPermanentTimestamp() {
+        Instant maxInstant = Instant.ofEpochSecond(Instant.MAX.getEpochSecond() / 1000L);
+        long milliseconds = maxInstant.toEpochMilli();
+        System.out.println("Milliseconds: " + milliseconds);
+        System.out.println("Timestamp: " + maxInstant);
+    }
 }

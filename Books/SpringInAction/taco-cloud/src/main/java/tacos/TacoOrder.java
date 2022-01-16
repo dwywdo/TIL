@@ -11,18 +11,24 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.CreditCardNumber;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.Data;
 
 @Data
+@Table("Taco_Order")
 public class TacoOrder implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Id
     private Long id;
 
     private Date placedAt;
 
+    @Column("delivery_name")
     @NotBlank(message="Delivery name is required")
     private String deliveryName;
     @NotBlank(message="Street is required")
@@ -37,7 +43,7 @@ public class TacoOrder implements Serializable {
     private String ccNumber;
     @Pattern(regexp="^(0[1-9]|1[0-2])([\\/])([1-9][0-9])$", message="Must be formatted MM/YY")
     private String ccExpiration;
-    @Digits(integer=3, fraction=0, message="Invalid CVV")
+    @Digits(integer = 3, fraction = 0, message="Invalid CVV")
     @Size(min=3, max=3)
     private String ccCVV;
 
@@ -46,5 +52,7 @@ public class TacoOrder implements Serializable {
     public void addTaco(Taco taco) {
         this.tacos.add(taco);
     }
+
+
 
 }

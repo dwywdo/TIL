@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.5.31"
+    kotlin("jvm") version "1.6.10"
 }
 
 
@@ -23,5 +23,8 @@ subprojects {
 
     dependencies {
         implementation(kotlin("stdlib"))
+        implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+")
+        implementation("org.jetbrains.kotlin:kotlin-reflect")
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     }
 }

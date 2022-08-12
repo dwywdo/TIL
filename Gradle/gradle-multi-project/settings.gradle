@@ -1,5 +1,0 @@
-rootProject.name = 'gradle-multi-project'
-include 'command'
-include 'common'
-include 'query'
-

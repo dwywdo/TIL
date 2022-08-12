@@ -2,6 +2,7 @@ package completablefuture;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -18,6 +19,8 @@ import org.junit.jupiter.api.Test;
 import completablefuture.ExchangeService.Money;
 
 class ShopTest {
+    private static final int MAXIMUM_SHOP_COUNT = 30;
+
     @Test
     void checkThreadPoolSize() {
         System.out.println(Runtime.getRuntime().availableProcessors());
@@ -91,20 +94,28 @@ class ShopTest {
 
     @Test
     void useSyncApiForMultipleShop() {
-        List<Shop> shops = Arrays.asList(
-                new Shop("BestShop"),
-                new Shop("LetsSaveBig"),
-                new Shop("MyFavoriteShop"),
-                new Shop("BuyItAll")
-        );
-        long start = System.nanoTime();
-        System.out.println(findPrices("myPhone27S", shops));
-        long duration = (System.nanoTime() - start) / 1_000_000;
-        System.out.println("Done in " + duration + " msecs");
+        List<Shop> shopList = new ArrayList<Shop>();
+        int maximumShopCount = MAXIMUM_SHOP_COUNT;
+        for (int i = 0; i < MAXIMUM_SHOP_COUNT; i++) {
+            shopList.add(new Shop("Shop#" + (i+1)));
+            long start = System.nanoTime();
+            findPrices("myPhone27S", shopList);
+            long duration = (System.nanoTime() - start) / 1_000_000;
+            System.out.println("Shop Count: " + shopList.size() + "\tDone in " + duration + " msecs");
+        }
     }
 
     @Test
     void useSyncApiForMultipleShopWithParallelStream() {
+        List<Shop> shopList = new ArrayList<Shop>();
+        int maximumShopCount = MAXIMUM_SHOP_COUNT;
+        for (int i = 0; i < MAXIMUM_SHOP_COUNT; i++) {
+            shopList.add(new Shop("Shop#" + (i+1)));
+            long start = System.nanoTime();
+            findPrices("myPhone27S", shopList);
+            long duration = (System.nanoTime() - start) / 1_000_000;
+            System.out.println("Shop Count: " + shopList.size() + "\tDone in " + duration + " msecs");
+        }
         List<Shop> shops = Arrays.asList(
                 new Shop("BestShop"),
                 new Shop("LetsSaveBig"),

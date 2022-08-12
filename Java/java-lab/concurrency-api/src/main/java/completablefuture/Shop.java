@@ -85,7 +85,7 @@ public class Shop {
 
     public static void delay() {
         try {
-            Thread.sleep(1000L);
+            Thread.sleep(100L);
         } catch (InterruptedException e) {
            throw new RuntimeException(e);
         }

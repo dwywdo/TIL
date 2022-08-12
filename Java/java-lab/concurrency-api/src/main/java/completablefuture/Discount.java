@@ -31,5 +31,4 @@ public class Discount {
            throw new RuntimeException(e);
         }
     }
-
 }

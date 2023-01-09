@@ -1,4 +1,4 @@
-package me.dwywdo.io.basic.server;
+package me.dwywdo.io.greet.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;

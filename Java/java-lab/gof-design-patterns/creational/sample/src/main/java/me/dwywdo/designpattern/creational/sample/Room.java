@@ -7,23 +7,23 @@ public class Room extends MapSite {
     private int roomNumber;
     List<MapSite> sides;
 
-    Room(int roomNo) {
+    public Room(int roomNo) {
         this.roomNumber = roomNo;
         this.sides = Arrays.asList(null, null, null, null);
     }
 
-    int getRoomNumber() { return roomNumber; }
+    public int getRoomNumber() { return roomNumber; }
 
-    MapSite getSide(Direction direction) {
+    public MapSite getSide(Direction direction) {
         return sides.get(direction.ordinal());
     }
 
-    void setSide(Direction direction, MapSite mapSite) {
+    public void setSide(Direction direction, MapSite mapSite) {
         sides.set(direction.ordinal(), mapSite);
     }
 
     @Override
-    void enter() {
+    public void enter() {
         System.out.println("Enter from Room " + roomNumber);
     }
 }

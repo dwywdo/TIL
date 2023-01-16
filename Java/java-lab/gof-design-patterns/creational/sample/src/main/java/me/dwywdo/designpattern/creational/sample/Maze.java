@@ -5,9 +5,9 @@ import java.util.List;
 
 public class Maze {
     List<Room> rooms;
-    Maze() { rooms = new ArrayList<>(); }
+    public Maze() {rooms = new ArrayList<>(); }
 
-    void addRoom(Room r) { rooms.add(r); }
+    public void addRoom(Room r) { rooms.add(r); }
 
     Room roomNo(int roomNumber) {
         return rooms.stream().filter(room -> room.getRoomNumber() == roomNumber).findFirst().orElseThrow(

@@ -8,6 +8,7 @@ repositories {
 
 subprojects {
     apply(plugin = "java")
+    apply(plugin = "java-library")
 
     group = "me.dwywdo"
     version = "1.0-SNAPSHOT"

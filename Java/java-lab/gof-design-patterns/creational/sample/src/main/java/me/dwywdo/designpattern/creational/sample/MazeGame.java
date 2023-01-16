@@ -3,6 +3,7 @@ package me.dwywdo.designpattern.creational.sample;
 public class MazeGame {
     /**
      * Room(r1) EAST-> door <-WEST Room(r2)
+     * Just simple architecture of maze requires a lot of code...
      */
     Maze createMaze() {
         Maze maze = new Maze();

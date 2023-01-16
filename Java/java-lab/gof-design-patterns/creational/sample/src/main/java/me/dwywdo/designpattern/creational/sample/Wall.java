@@ -2,7 +2,7 @@ package me.dwywdo.designpattern.creational.sample;
 
 public class Wall extends MapSite{
 
-    Wall() {};
+    public Wall() {};
 
     @Override
     void enter() {

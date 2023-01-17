@@ -1,5 +1,8 @@
 package me.dwywdo.designpattern.structural.adapter.security;
 
+/**
+ * Client Code
+ */
 public class LoginHandler {
     UserDetailsService userDetailsService;
 

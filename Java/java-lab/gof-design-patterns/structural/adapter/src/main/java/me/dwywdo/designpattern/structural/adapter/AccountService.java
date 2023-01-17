@@ -1,9 +1,12 @@
 package me.dwywdo.designpattern.structural.adapter;
 
+import me.dwywdo.designpattern.structural.adapter.security.UserDetails;
+import me.dwywdo.designpattern.structural.adapter.security.UserDetailsService;
+
 /**
  * Adaptee #2
  */
-public class AccountService {
+public class AccountService implements UserDetailsService {
     public Account findAccountByUsername(String username) {
         Account account = new Account();
         account.setName(username);
@@ -14,4 +17,10 @@ public class AccountService {
 
     public void createNewAccount(Account account) { }
     public void updateAccount(Account account) { }
+
+    @Override
+    public UserDetails loadUser(String username) {
+        Account accountByUsername = findAccountByUsername(username);
+        return accountByUsername;
+    }
 }

@@ -1,9 +1,11 @@
 package me.dwywdo.designpattern.structural.adapter;
 
+import me.dwywdo.designpattern.structural.adapter.security.UserDetails;
+
 /**
  * Adaptee #1
  */
-public class Account {
+public class Account implements UserDetails {
     private String name;
     private String password;
     private String email;
@@ -16,6 +18,12 @@ public class Account {
         this.name = name;
     }
 
+    @Override
+    public String getUsername() {
+        return name;
+    }
+
+    @Override
     public String getPassword() {
         return password;
     }

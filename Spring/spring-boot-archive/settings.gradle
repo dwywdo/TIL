@@ -1,2 +1,0 @@
-rootProject.name = 'spring-boot-archive'
-includeBuild '../your-spring-boot-starter'

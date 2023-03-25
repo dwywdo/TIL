@@ -16,17 +16,29 @@ import org.gradle.testing.jacoco.tasks.JacocoReport
 class CoverageLockPlugin: Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.extensions.create("coverageLockIn", CoverageLockInExtension::class.java)
-        val defaultLockInFile: RegularFile = project.layout.projectDirectory.file("coverage_lock_in.txt")
-        extension.coverageFile.convention(defaultLockInFile)
-        extension.goal.convention(0.8f)
-        extension.counter.convention("LINE")
-        extension.onCi.convention(false)
-        extension.internalCurrentCoverage.convention(
-            project.providers.fileContents(extension.coverageFile).asText.map { it.toFloat() }.orElse(extension.goal)
-        )
-        extension.internalCurrentCoverage.disallowChanges()
+
+        initializeExtension(project, extension)
 
         project.plugins.apply(JacocoPlugin::class.java)
+
+        configureJacoco(project, extension)
+    }
+
+    private fun initializeExtension(project: Project, extension: CoverageLockInExtension) = extension.apply {
+        this.coverageFile.convention(project.layout.projectDirectory.file("coverage_lock_in.txt") as RegularFile)
+        this.goal.convention(0.8f)
+        this.counter.convention("LINE")
+        this.onCi.convention(false)
+        this.internalCurrentCoverage.convention(
+            project.providers.fileContents(extension.coverageFile).asText.map { it.toFloat() }.orElse(extension.goal)
+        )
+        this.internalCurrentCoverage.disallowChanges()
+    }
+
+    /**
+     * Configures the Jacoco tasks.
+     */
+    private fun configureJacoco(project: Project, extension: CoverageLockInExtension) {
         project.tasks.named("jacocoTestReport", JacocoReport::class.java) { task ->
             task.dependsOn("test")
             task.reports.xml.required.set(true)
@@ -35,6 +47,7 @@ class CoverageLockPlugin: Plugin<Project> {
 
         project.tasks.named("jacocoTestCoverageVerification", JacocoCoverageVerification::class.java) { task ->
             task.dependsOn("jacocoTestReport")
+
             task.violationRules.rule { rule ->
                 rule.limit { limit ->
                     limit.counter = extension.counter.get()

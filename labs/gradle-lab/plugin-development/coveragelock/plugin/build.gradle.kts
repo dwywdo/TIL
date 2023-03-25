@@ -3,7 +3,7 @@
  *
  * This generated file contains a sample Gradle plugin project to get you started.
  * For more details take a look at the Writing Custom Plugins chapter in the Gradle
- * User Manual available at https://docs.gradle.org/8.0.2/userguide/custom_plugins.html
+ * User Manual available at https://docs.gradle.org/7.5.1/userguide/custom_plugins.html
  */
 
 plugins {
@@ -20,13 +20,21 @@ repositories {
 }
 
 dependencies {
-    // Use the Kotlin JUnit 5 integration.
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    // Align versions of all Kotlin components
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+
+    // Use the Kotlin JDK 8 standard library.
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+    // Use the Kotlin test library.
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+
+    // Use the Kotlin JUnit integration.
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
 
 gradlePlugin {
-    // Define the plugin
-    val greeting by plugins.creating {
+    val coveragelock by plugins.creating {
         id = "me.dwywdo.lab.gradle.coveragelock"
         implementationClass = "me.dwywdo.lab.gradle.CoverageLockPlugin"
         description = "Incrementally locks in test coverage gains"
@@ -43,7 +51,6 @@ configurations["functionalTestImplementation"].extendsFrom(configurations["testI
 val functionalTest by tasks.registering(Test::class) {
     testClassesDirs = functionalTestSourceSet.output.classesDirs
     classpath = functionalTestSourceSet.runtimeClasspath
-    useJUnitPlatform()
 }
 
 gradlePlugin.testSourceSets(functionalTestSourceSet)
@@ -51,9 +58,4 @@ gradlePlugin.testSourceSets(functionalTestSourceSet)
 tasks.named<Task>("check") {
     // Run the functional tests as part of `check`
     dependsOn(functionalTest)
-}
-
-tasks.named<Test>("test") {
-    // Use JUnit Jupiter for unit tests.
-    useJUnitPlatform()
 }

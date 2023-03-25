@@ -3,41 +3,48 @@
  */
 package me.dwywdo.lab.gradle
 
+import org.gradle.testkit.runner.BuildResult
 import java.io.File
 import kotlin.test.assertTrue
 import kotlin.test.Test
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.jupiter.api.io.TempDir
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 
 /**
- * A simple functional test for the 'me.dwywdo.lab.gradle.greeting' plugin.
+ * A simple functional test for the 'me.dwywdo.lab.gradle.coveragelock' plugin.
  */
-class CoverageLockPluginTestFunctionalTest {
+class CoverageLockPluginFunctionalTest {
 
-    @field:TempDir
-    lateinit var projectDir: File
+    @get:Rule
+    val tempFolder = TemporaryFolder()
 
-    private val buildFile by lazy { projectDir.resolve("build.gradle") }
-    private val settingsFile by lazy { projectDir.resolve("settings.gradle") }
+    @Test
+    fun `no coverage file`() {
+        setupTestProject("just_plugin_applied")
+        val log: String = runAndGetLogs(false, "jacocoTestReport");
+        assertTrue(log.contains("but expected minimum is 0.8"))
+    }
 
-    @Test fun `can run task`() {
-        // Set up the test build
-        settingsFile.writeText("")
-        buildFile.writeText("""
-            plugins {
-                id('me.dwywdo.lab.gradle.coveragelock')
-            }
-        """.trimIndent())
+    @Test fun `with coverage file`() {
+        setupTestProject("just_plugin_with_file")
+        val log : String = runAndGetLogs(false, "jacocoTestReport");
+        assertTrue(log.contains("but expected minimum is 0.6"))
+    }
 
-        // Run the build
+    private fun runAndGetLogs(expectSuccess: Boolean, taskToRun: String): String {
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("greeting")
-        runner.withProjectDir(projectDir)
-        val result = runner.build()
+        runner.withProjectDir(tempFolder.root)
+        runner.withArguments(taskToRun)
+        val result: BuildResult = if (expectSuccess) runner.build() else runner.buildAndFail()
 
-        // Verify the result
-        assertTrue(result.output.contains("Hello from plugin 'me.dwywdo.lab.gradle.coveragelock'"))
+        return result.output
+    }
+
+    private fun setupTestProject(dir: String) {
+        val srcDir = File("src/functionalTest/resources", dir)
+        srcDir.copyRecursively(tempFolder.root)
     }
 }

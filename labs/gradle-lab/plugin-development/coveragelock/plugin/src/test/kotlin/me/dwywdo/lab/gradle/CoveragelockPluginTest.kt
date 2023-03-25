@@ -4,7 +4,10 @@
 package me.dwywdo.lab.gradle
 
 import org.gradle.testfixtures.ProjectBuilder
+import org.gradle.testing.jacoco.tasks.JacocoCoverageVerification
+import org.gradle.testing.jacoco.tasks.rules.JacocoViolationRule
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 /**
@@ -17,5 +20,22 @@ class CoverageLockPluginTest {
         project.plugins.apply("me.dwywdo.lab.gradle.coveragelock")
 
         println(project.extensions)
+    }
+
+    @Test fun `plugin creates jacoco rule`() {
+        val project = ProjectBuilder.builder().build()
+        project.plugins.apply("application")
+        project.plugins.apply("me.dwywdo.lab.gradle.coveragelock")
+
+        val task: JacocoCoverageVerification = project.tasks.named(
+            "jacocoTestCoverageVerification",
+            JacocoCoverageVerification::class.java
+        ).get()
+        assertEquals(1, task.violationRules.rules.size)
+
+        val rule: JacocoViolationRule = task.violationRules.rules[0]
+        assertEquals(1, rule.limits.size)
+        assertEquals("LINE", rule.limits[0].counter)
+        assertEquals("COVEREDRATIO", rule.limits[0].value)
     }
 }

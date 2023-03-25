@@ -6,6 +6,9 @@ package me.dwywdo.lab.gradle
 import org.gradle.api.Project
 import org.gradle.api.Plugin
 import org.gradle.api.file.RegularFile
+import org.gradle.testing.jacoco.plugins.JacocoPlugin
+import org.gradle.testing.jacoco.tasks.JacocoCoverageVerification
+import org.gradle.testing.jacoco.tasks.JacocoReport
 
 /**
  * Coverage Lock In Plugin that locks in test coverage gain in a text file
@@ -22,5 +25,24 @@ class CoverageLockPlugin: Plugin<Project> {
             project.providers.fileContents(extension.coverageFile).asText.map { it.toFloat() }.orElse(extension.goal)
         )
         extension.internalCurrentCoverage.disallowChanges()
+
+        project.plugins.apply(JacocoPlugin::class.java)
+        project.tasks.named("jacocoTestReport", JacocoReport::class.java) { task ->
+            task.dependsOn("test")
+            task.reports.xml.required.set(true)
+            task.finalizedBy("jacocoTestCoverageVerification")
+        }
+
+        project.tasks.named("jacocoTestCoverageVerification", JacocoCoverageVerification::class.java) { task ->
+            task.dependsOn("jacocoTestReport")
+            task.violationRules.rule { rule ->
+                rule.limit { limit ->
+                    limit.counter = extension.counter.get()
+                    limit.value = "COVEREDRATIO"
+                    limit.minimum = extension.internalCurrentCoverage.get().toBigDecimal()
+                }
+            }
+        }
     }
 }
+

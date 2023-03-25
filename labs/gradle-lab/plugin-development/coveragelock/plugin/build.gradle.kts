@@ -27,8 +27,9 @@ dependencies {
 gradlePlugin {
     // Define the plugin
     val greeting by plugins.creating {
-        id = "me.dwywdo.lab.gradle.greeting"
-        implementationClass = "me.dwywdo.lab.gradle.CoveragelockPlugin"
+        id = "me.dwywdo.lab.gradle.coveragelock"
+        implementationClass = "me.dwywdo.lab.gradle.CoverageLockPlugin"
+        description = "Incrementally locks in test coverage gains"
     }
 }
 

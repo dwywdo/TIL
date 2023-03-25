@@ -9,12 +9,12 @@ import org.gradle.api.Plugin
 /**
  * A simple 'hello world' plugin.
  */
-class CoveragelockPlugin: Plugin<Project> {
+class CoverageLockPlugin: Plugin<Project> {
     override fun apply(project: Project) {
         // Register a task
         project.tasks.register("greeting") { task ->
             task.doLast {
-                println("Hello from plugin 'me.dwywdo.lab.gradle.greeting'")
+                println("Hello from plugin 'me.dwywdo.lab.gradle.coveragelock'")
             }
         }
     }

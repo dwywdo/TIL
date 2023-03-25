@@ -9,3 +9,7 @@
 
 rootProject.name = "pluginmanualtest"
 include("app")
+
+pluginManagement {
+    includeBuild("../coveragelock")
+}

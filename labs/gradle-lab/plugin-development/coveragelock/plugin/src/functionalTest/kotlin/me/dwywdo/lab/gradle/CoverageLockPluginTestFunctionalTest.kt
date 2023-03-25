@@ -12,7 +12,7 @@ import org.junit.jupiter.api.io.TempDir
 /**
  * A simple functional test for the 'me.dwywdo.lab.gradle.greeting' plugin.
  */
-class CoveragelockPluginFunctionalTest {
+class CoverageLockPluginTestFunctionalTest {
 
     @field:TempDir
     lateinit var projectDir: File
@@ -25,7 +25,7 @@ class CoveragelockPluginFunctionalTest {
         settingsFile.writeText("")
         buildFile.writeText("""
             plugins {
-                id('me.dwywdo.lab.gradle.greeting')
+                id('me.dwywdo.lab.gradle.coveragelock')
             }
         """.trimIndent())
 
@@ -38,6 +38,6 @@ class CoveragelockPluginFunctionalTest {
         val result = runner.build()
 
         // Verify the result
-        assertTrue(result.output.contains("Hello from plugin 'me.dwywdo.lab.gradle.greeting'"))
+        assertTrue(result.output.contains("Hello from plugin 'me.dwywdo.lab.gradle.coveragelock'"))
     }
 }

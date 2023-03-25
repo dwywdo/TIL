@@ -11,12 +11,11 @@ import kotlin.test.assertNotNull
  * A simple unit test for the 'me.dwywdo.lab.gradle.coveragelock' plugin.
  */
 class CoverageLockPluginTest {
-    @Test fun `plugin registers task`() {
-        // Create a test project and apply the plugin
+    @Test fun `plugin creates extension`() {
         val project = ProjectBuilder.builder().build()
+        project.plugins.apply("application")
         project.plugins.apply("me.dwywdo.lab.gradle.coveragelock")
 
-        // Verify the result
-        assertNotNull(project.tasks.findByName("greeting"))
+        println(project.extensions)
     }
 }

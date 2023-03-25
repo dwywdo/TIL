@@ -5,17 +5,22 @@ package me.dwywdo.lab.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.Plugin
+import org.gradle.api.file.RegularFile
 
 /**
- * A simple 'hello world' plugin.
+ * Coverage Lock In Plugin that locks in test coverage gain in a text file
  */
 class CoverageLockPlugin: Plugin<Project> {
     override fun apply(project: Project) {
-        // Register a task
-        project.tasks.register("greeting") { task ->
-            task.doLast {
-                println("Hello from plugin 'me.dwywdo.lab.gradle.coveragelock'")
-            }
-        }
+        val extension = project.extensions.create("coverageLockIn", CoverageLockInExtension::class.java)
+        val defaultLockInFile: RegularFile = project.layout.projectDirectory.file("coverage_lock_in.txt")
+        extension.coverageFile.convention(defaultLockInFile)
+        extension.goal.convention(0.8f)
+        extension.counter.convention("LINE")
+        extension.onCi.convention(false)
+        extension.internalCurrentCoverage.convention(
+            project.providers.fileContents(extension.coverageFile).asText.map { it.toFloat() }.orElse(extension.goal)
+        )
+        extension.internalCurrentCoverage.disallowChanges()
     }
 }

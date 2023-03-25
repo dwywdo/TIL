@@ -22,7 +22,11 @@ class CoverageLockPlugin: Plugin<Project> {
         project.plugins.apply(JacocoPlugin::class.java)
 
         configureJacoco(project, extension)
+
+        registerLockInTask(project, extension)
     }
+
+
 
     private fun initializeExtension(project: Project, extension: CoverageLockInExtension) = extension.apply {
         this.coverageFile.convention(project.layout.projectDirectory.file("coverage_lock_in.txt") as RegularFile)
@@ -55,6 +59,22 @@ class CoverageLockPlugin: Plugin<Project> {
                     limit.minimum = extension.internalCurrentCoverage.get().toBigDecimal()
                 }
             }
+        }
+    }
+
+    /**
+     * Register the task that locks in coverage gains.
+     */
+    private fun registerLockInTask(project: Project, extension: CoverageLockInExtension) {
+        project.tasks.register("lockInCoverageGains", CoverageLockInTask::class.java) { task ->
+            task.counter.set(extension.counter.get())
+            task.goal.set(extension.goal.get())
+            task.onCi.set(extension.onCi.get())
+            task.coverageFile.set(extension.coverageFile.get())
+            task.reportXmlFile.set(
+                project.tasks.named("jacocoTestReport", JacocoReport::class.java)
+                    .map { it.reports.xml.outputLocation.get() }
+            )
         }
     }
 }

@@ -10,6 +10,7 @@ import kotlin.test.Test
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import kotlin.test.assertEquals
 
 /**
  * A simple functional test for the 'me.dwywdo.lab.gradle.coveragelock' plugin.
@@ -30,6 +31,15 @@ class CoverageLockPluginFunctionalTest {
         setupTestProject("just_plugin_with_file")
         val log : String = runAndGetLogs(false, "jacocoTestReport");
         assertTrue(log.contains("but expected minimum is 0.6"))
+    }
+
+    @Test fun `coverage increases`() {
+        setupTestProject("coverage_increases")
+        val log : String = runAndGetLogs(true, "lockInCoverageGains");
+        assertTrue(log.contains("Coverage has increased from"))
+        assertTrue(log.contains("Locking in coverage of"))
+        // Verify file has been modified.
+        assertEquals(0.5f, File(tempFolder.root, "app/coverage_lock_in.txt").readText().toFloat())
     }
 
     private fun runAndGetLogs(expectSuccess: Boolean, taskToRun: String): String {

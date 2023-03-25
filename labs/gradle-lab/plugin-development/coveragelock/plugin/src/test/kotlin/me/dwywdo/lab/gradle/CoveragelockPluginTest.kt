@@ -38,4 +38,15 @@ class CoverageLockPluginTest {
         assertEquals("LINE", rule.limits[0].counter)
         assertEquals("COVEREDRATIO", rule.limits[0].value)
     }
+
+    @Test fun `plugin registers task`() {
+        val project = ProjectBuilder.builder().build()
+        project.plugins.apply("application")
+        project.plugins.apply("me.dwywdo.lab.gradle.coveragelock")
+
+        assertNotNull(project.tasks.findByName("lockInCoverageGains"))
+        val task : CoverageLockInTask = project.tasks.getByName("lockInCoverageGains") as CoverageLockInTask
+        assertEquals(0.8f, task.goal.get())
+        assertEquals("LINE", task.counter.get())
+    }
 }

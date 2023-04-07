@@ -20,6 +20,7 @@ subprojects {
     }
 
     dependencies {
+        implementation("ch.qos.logback:logback-classic:1.4.6")
         /**
          * JUnit5 = JUnit Platform + JUnit Jupiter (JUnit5) + JUnit Vintage (TestEngine for JUnit3/4)
          * Ref. https://docs.gradle.org/current/userguide/java_testing.html#using_junit5

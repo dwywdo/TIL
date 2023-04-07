@@ -6,7 +6,6 @@ plugins {
 }
 
 dependencies {
-    implementation("ch.qos.logback:logback-classic:1.4.6")
     implementation("org.aspectj:aspectjrt:1.9.19")
     runtimeOnly("org.aspectj:aspectjweaver:1.9.19")
 }

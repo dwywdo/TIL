@@ -8,3 +8,5 @@
  */
 
 rootProject.name = "java-lab"
+
+include("aop-lab")

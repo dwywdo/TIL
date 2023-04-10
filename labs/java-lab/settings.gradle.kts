@@ -10,3 +10,4 @@
 rootProject.name = "java-lab"
 
 include("aop-lab")
+include("concurrency-lab")

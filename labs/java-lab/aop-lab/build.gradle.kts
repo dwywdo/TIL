@@ -1,7 +1,6 @@
 import io.freefair.gradle.plugins.aspectj.WeavingSourceSet
 
 plugins {
-    java
     id("io.freefair.aspectj.post-compile-weaving") version "8.0.1"
 }
 

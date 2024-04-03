@@ -1,7 +1,8 @@
 import com.linecorp.thrift.plugin.CompileThrift
 
 plugins {
-    id("com.linecorp.thrift-gradle-plugin") version "0.5.0"
+    id("com.google.osdetector") version "1.7.3"
+    id("com.linecorp.thrift-gradle-plugin") version "0.6.1"
     id("java-library")
 }
 
@@ -11,6 +12,6 @@ dependencies {
 }
 
 tasks.withType<CompileThrift>().all {
-    isRecurse = true
-    thriftExecutable = "src/resources/thrift.osx-aarch_64"
+    recurse = true
+    thriftExecutable = "src/resources/thrift.${osdetector.classifier}"
 }

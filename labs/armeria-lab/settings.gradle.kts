@@ -14,3 +14,4 @@ rootProject.name = "armeria-lab"
 include("spring-boot-thrift:server")
 include("spring-boot-thrift:client")
 include("spring-boot-thrift:protocol")
+include("rest-api-annotated-service")

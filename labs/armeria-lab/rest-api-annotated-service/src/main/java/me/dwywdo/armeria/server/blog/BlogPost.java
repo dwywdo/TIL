@@ -1,5 +1,8 @@
 package me.dwywdo.armeria.server.blog;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public final class BlogPost {
     private final int id;
     private final String title;
@@ -7,7 +10,11 @@ public final class BlogPost {
     private final long createdAt;
     private final long modifiedAt;
 
-    BlogPost(int id, String title, String content) {
+
+    @JsonCreator
+    BlogPost(@JsonProperty("id") int id,
+             @JsonProperty("title") String title,
+             @JsonProperty("content") String content) {
         this(id, title, content, System.currentTimeMillis());
     }
 

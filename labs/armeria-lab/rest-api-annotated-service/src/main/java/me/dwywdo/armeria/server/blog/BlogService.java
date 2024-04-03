@@ -1,12 +1,16 @@
 package me.dwywdo.armeria.server.blog;
 
 import com.linecorp.armeria.common.HttpResponse;
+import com.linecorp.armeria.common.HttpStatus;
 import com.linecorp.armeria.server.annotation.Default;
+import com.linecorp.armeria.server.annotation.Delete;
 import com.linecorp.armeria.server.annotation.Get;
 import com.linecorp.armeria.server.annotation.Param;
 import com.linecorp.armeria.server.annotation.Post;
 import com.linecorp.armeria.server.annotation.ProducesJson;
+import com.linecorp.armeria.server.annotation.Put;
 import com.linecorp.armeria.server.annotation.RequestConverter;
+import com.linecorp.armeria.server.annotation.RequestObject;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,5 +54,16 @@ public final class BlogService {
 
         // Ascending
         return blogPosts.values().stream().collect(Collectors.toList());
+    }
+
+    @Put("/blogs/:id")
+    public HttpResponse updateBlogPost(@Param("id") int id, @RequestObject BlogPost blogPost) {
+        final BlogPost oldBlogPost = blogPosts.get(id);
+        if (oldBlogPost == null) { return HttpResponse.of(HttpStatus.NOT_FOUND); }
+
+        final BlogPost newBlogPost = new BlogPost(id, blogPost.getTitle(), blogPost.getContent(), oldBlogPost.getCreatedAt(), blogPost.getCreatedAt());
+        blogPosts.put(id, newBlogPost);
+
+        return HttpResponse.ofJson(newBlogPost);
     }
 }

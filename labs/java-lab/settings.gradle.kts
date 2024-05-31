@@ -11,3 +11,4 @@ plugins {
 }
 
 rootProject.name = "java-lab"
+include("networking")

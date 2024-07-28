@@ -2,6 +2,8 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+> This project is based on the book, "소플의 처음 만난 리액트", for the practices from each chapters
+
 ## Available Scripts
 
 In the project directory, you can run:

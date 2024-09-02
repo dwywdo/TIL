@@ -12,3 +12,4 @@ plugins {
 
 rootProject.name = "java-lab"
 include("networking")
+include("reactive-streams")

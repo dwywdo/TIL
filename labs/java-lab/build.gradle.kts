@@ -1,5 +1,6 @@
 plugins {
     application
+    id("io.freefair.lombok") version "8.10" apply false
 }
 
 subprojects {

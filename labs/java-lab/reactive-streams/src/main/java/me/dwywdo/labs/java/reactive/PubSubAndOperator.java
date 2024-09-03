@@ -3,11 +3,31 @@ package me.dwywdo.labs.java.reactive;
 import java.util.concurrent.Flow.Publisher;
 import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Reactive Streams - Operators
+ * <p>
+ * 기본 구조:
+ * Publisher -> Data -> Subscriber
+ * <p>
+ * Operator를 추가하게 되면 데이터의 가공 및 변경이 가능해진다.
+ * <p>
+ * Operator 적용 구조:
+ * Publisher -> **Data** -> Data Operator#1 -> **Data2** -> Data Operator#2 -> **Data3** -> Subscriber
+ *
+ * 1. map (d1 -> f -> d2)
+ *   <--- Upstream | publisher -> [Data1] -> mapPublisher -> [Data2] -> logSub | ---> Downstream
+ *                                         <- subscribe(logSub)
+ *                                         -> onSubscribe(s)
+ *                                         -> onNext
+ *                                         -> onNext
+ *                                         -> onComplete
+ */
 @Slf4j
 public class PubSubAndOperator {
     public static void main(String[] args) {
@@ -16,9 +36,24 @@ public class PubSubAndOperator {
                                                  .collect(Collectors.toList());
 
         final Publisher<Integer> publisher = iterPub(iterable);
-        final Subscriber<Integer> subscriber = logSub();
+        final Publisher<Integer> mapPublisher = mapPub(publisher, s -> s * 10);
+        final Publisher<Integer> mapPublisher2 = mapPub(mapPublisher, s -> -s);
+        mapPublisher2.subscribe(logSub());
+    }
 
-        publisher.subscribe(subscriber);
+    private static Publisher<Integer> mapPub(Publisher<Integer> pub,
+                                             Function<Integer, Integer> f) {
+        return new Publisher<Integer>() {
+            @Override
+            public void subscribe(Subscriber<? super Integer> sub) {
+                pub.subscribe(new DelegateSub(sub) {
+                    @Override
+                    public void onNext(Integer item) {
+                        sub.onNext(f.apply(item));
+                    }
+                });
+            }
+        };
     }
 
     private static Subscriber<Integer> logSub() {

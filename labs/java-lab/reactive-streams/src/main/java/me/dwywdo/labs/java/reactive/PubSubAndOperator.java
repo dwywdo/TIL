@@ -1,5 +1,6 @@
 package me.dwywdo.labs.java.reactive;
 
+import java.util.concurrent.Flow;
 import java.util.concurrent.Flow.Publisher;
 import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
@@ -27,6 +28,13 @@ import lombok.extern.slf4j.Slf4j;
  *                                         -> onNext
  *                                         -> onNext
  *                                         -> onComplete
+ * 2. sum (d1,d1,d2 -> f -> d1+d2+d3)
+ *   <--- Upstream | publisher -> [Data1, Data2, Data3] -> sumPublisher -> [Data1+2+3] -> logSub | ---> Downstream
+ *                                                       <- subscribe(logSub)
+ *                                                       -> onSubscribe(s)
+ *                                                       -> onNext
+ *                                                       -> onNext
+ *                                                       -> onComplete
  */
 @Slf4j
 public class PubSubAndOperator {
@@ -36,9 +44,30 @@ public class PubSubAndOperator {
                                                  .collect(Collectors.toList());
 
         final Publisher<Integer> publisher = iterPub(iterable);
-        final Publisher<Integer> mapPublisher = mapPub(publisher, s -> s * 10);
-        final Publisher<Integer> mapPublisher2 = mapPub(mapPublisher, s -> -s);
-        mapPublisher2.subscribe(logSub());
+        final Publisher<Integer> sumPublisher = sumPub(publisher);
+        sumPublisher.subscribe(logSub());
+    }
+
+    private static Publisher<Integer> sumPub(Publisher<Integer> pub) {
+        return new Publisher<Integer>() {
+            @Override
+            public void subscribe(Subscriber<? super Integer> sub) {
+                pub.subscribe(new DelegateSub(sub) {
+                    int sum = 0;
+
+                    @Override
+                    public void onNext(Integer item) {
+                        sum += item;
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        sub.onNext(sum);
+                        sub.onComplete();
+                    }
+                });
+            }
+        };
     }
 
     private static Publisher<Integer> mapPub(Publisher<Integer> pub,

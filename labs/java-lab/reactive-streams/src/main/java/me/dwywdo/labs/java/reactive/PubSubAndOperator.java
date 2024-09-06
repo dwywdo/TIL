@@ -4,6 +4,7 @@ import java.util.concurrent.Flow;
 import java.util.concurrent.Flow.Publisher;
 import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,8 +45,46 @@ public class PubSubAndOperator {
                                                  .collect(Collectors.toList());
 
         final Publisher<Integer> publisher = iterPub(iterable);
-        final Publisher<Integer> sumPublisher = sumPub(publisher);
-        sumPublisher.subscribe(logSub());
+        // final Publisher<Integer> sumPublisher = sumPub(publisher);
+        /**
+         * Lambda만 쓰면 어떤 타입으로 해석해야 할 지 모르기 때문에 BiFunction으로 캐스팅해주어야 한다.
+         * 안해줘도 알아서 해석하긴 할 것이다.
+         */
+        final Publisher<Integer> reducePublisher = reducePub(publisher, 0, (BiFunction<Integer, Integer, Integer>)(a, b) -> a + b);
+        reducePublisher.subscribe(logSub());
+    }
+
+    /**
+     * 1,2,3,4,5
+     * 0 -> (0, 1) => 0 + 1 = 1
+     * 1 -> (1, 2) => 1 + 2 = 3
+     * 3 -> (3, 3) => 3 + 3 = 6
+     * ...
+     */
+    private static Publisher<Integer> reducePub(Publisher<Integer> publisher,
+                                                int init,
+                                                BiFunction<Integer, Integer, Integer> bf
+    ) {
+        return new Publisher<Integer>() {
+            @Override
+            public void subscribe(Subscriber<? super Integer> sub) {
+                publisher.subscribe(new DelegateSub(sub) {
+                    int result = init;
+
+                    @Override
+                    public void onNext(Integer item) {
+                        result = bf.apply(result, item);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        sub.onNext(result);
+                        sub.onComplete();
+                    }
+                });
+            }
+        };
+
     }
 
     private static Publisher<Integer> sumPub(Publisher<Integer> pub) {

@@ -1,10 +1,14 @@
 plugins {
     application
     id("io.freefair.lombok") version "8.10" apply false
+    id("org.springframework.boot") version "3.3.0" apply false
+    id("io.spring.dependency-management") version "1.1.5"
 }
 
 subprojects {
     plugins.apply("application")
+    plugins.apply("org.springframework.boot")
+    plugins.apply("io.spring.dependency-management")
 
     repositories {
         // Use Maven Central for resolving dependencies.
@@ -28,7 +32,7 @@ subprojects {
 // Apply a specific Java toolchain to ease working on different environments.
     java {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(11))
+            languageVersion.set(JavaLanguageVersion.of(17))
         }
     }
 

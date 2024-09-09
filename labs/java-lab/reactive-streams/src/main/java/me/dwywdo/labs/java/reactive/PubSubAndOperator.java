@@ -50,8 +50,12 @@ public class PubSubAndOperator {
          * Lambda만 쓰면 어떤 타입으로 해석해야 할 지 모르기 때문에 BiFunction으로 캐스팅해주어야 한다.
          * 안해줘도 알아서 해석하긴 할 것이다.
          */
-        final Publisher<Integer> reducePublisher = reducePub(publisher, 0, (BiFunction<Integer, Integer, Integer>)(a, b) -> a + b);
-        reducePublisher.subscribe(logSub());
+        // final Publisher<Integer> reducePublisher = reducePub(publisher, 0, (BiFunction<Integer, Integer, Integer>)(a, b) -> a + b);
+        // reducePublisher.subscribe(logSub());
+
+        final Publisher<Integer> mapPub = mapPub(publisher, s -> s * 10);
+        mapPub.subscribe(logSub());
+
     }
 
     /**
@@ -61,7 +65,7 @@ public class PubSubAndOperator {
      * 3 -> (3, 3) => 3 + 3 = 6
      * ...
      */
-    private static Publisher<Integer> reducePub(Publisher<Integer> publisher,
+/*    private static Publisher<Integer> reducePub(Publisher<Integer> publisher,
                                                 int init,
                                                 BiFunction<Integer, Integer, Integer> bf
     ) {
@@ -85,9 +89,9 @@ public class PubSubAndOperator {
             }
         };
 
-    }
+    }*/
 
-    private static Publisher<Integer> sumPub(Publisher<Integer> pub) {
+    /*private static Publisher<Integer> sumPub(Publisher<Integer> pub) {
         return new Publisher<Integer>() {
             @Override
             public void subscribe(Subscriber<? super Integer> sub) {
@@ -108,15 +112,15 @@ public class PubSubAndOperator {
             }
         };
     }
-
-    private static Publisher<Integer> mapPub(Publisher<Integer> pub,
-                                             Function<Integer, Integer> f) {
-        return new Publisher<Integer>() {
+*/
+    private static <T> Publisher<T> mapPub(Publisher<T> pub,
+                                           Function<T, T> f) {
+        return new Publisher<T>() {
             @Override
-            public void subscribe(Subscriber<? super Integer> sub) {
-                pub.subscribe(new DelegateSub(sub) {
+            public void subscribe(Subscriber<? super T> sub) {
+                pub.subscribe(new DelegateSub<T>(sub) {
                     @Override
-                    public void onNext(Integer item) {
+                    public void onNext(T item) {
                         sub.onNext(f.apply(item));
                     }
                 });
@@ -124,8 +128,8 @@ public class PubSubAndOperator {
         };
     }
 
-    private static Subscriber<Integer> logSub() {
-        return new Subscriber<Integer>() {
+    private static <T> Subscriber<T> logSub() {
+        return new Subscriber<T>() {
             @Override
             public void onSubscribe(Subscription subscription) {
                 log.debug("onSubscribe");
@@ -133,7 +137,7 @@ public class PubSubAndOperator {
             }
 
             @Override
-            public void onNext(Integer item) {
+            public void onNext(T item) {
                 log.debug("onNext:{}", item);
             }
 

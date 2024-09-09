@@ -52,13 +52,12 @@ public class PubSubAndOperator {
          * Lambda만 쓰면 어떤 타입으로 해석해야 할 지 모르기 때문에 BiFunction으로 캐스팅해주어야 한다.
          * 안해줘도 알아서 해석하긴 할 것이다.
          */
-        // final Publisher<Integer> reducePublisher = reducePub(publisher, 0, (BiFunction<Integer, Integer, Integer>)(a, b) -> a + b);
-        // reducePublisher.subscribe(logSub());
+        final Publisher<String> reducePublisher = reducePub(publisher, "", (BiFunction<String, Integer, String>)(a, b) -> a + '-' + b);
+        reducePublisher.subscribe(logSub());
 
-        final Publisher<String> mapPub = mapPub(publisher, s -> "[" + s + ']');
+        // final Publisher<String> mapPub = mapPub(publisher, s -> "[" + s + ']');
         // final Publisher<List> listMapPub = mapPub(publisher, Arrays::asList);
 
-        mapPub.subscribe(logSub());
     }
 
     /**
@@ -68,15 +67,18 @@ public class PubSubAndOperator {
      * 3 -> (3, 3) => 3 + 3 = 6
      * ...
      */
-/*    private static Publisher<Integer> reducePub(Publisher<Integer> publisher,
-                                                int init,
-                                                BiFunction<Integer, Integer, Integer> bf
+    /**
+     *
+     */
+    private static Publisher<String> reducePub(Publisher<Integer> publisher,
+                                                String init,
+                                                BiFunction<String, Integer, String> bf
     ) {
-        return new Publisher<Integer>() {
+        return new Publisher<String>() {
             @Override
-            public void subscribe(Subscriber<? super Integer> sub) {
-                publisher.subscribe(new DelegateSub(sub) {
-                    int result = init;
+            public void subscribe(Subscriber<? super String> sub) {
+                publisher.subscribe(new DelegateSub<Integer, String>(sub) {
+                    String result = init;
 
                     @Override
                     public void onNext(Integer item) {
@@ -92,7 +94,7 @@ public class PubSubAndOperator {
             }
         };
 
-    }*/
+    }
 
     /*private static Publisher<Integer> sumPub(Publisher<Integer> pub) {
         return new Publisher<Integer>() {

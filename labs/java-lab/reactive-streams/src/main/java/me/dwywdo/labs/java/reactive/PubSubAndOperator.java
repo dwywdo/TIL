@@ -1,5 +1,7 @@
 package me.dwywdo.labs.java.reactive;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Flow;
 import java.util.concurrent.Flow.Publisher;
 import java.util.concurrent.Flow.Subscriber;
@@ -53,9 +55,10 @@ public class PubSubAndOperator {
         // final Publisher<Integer> reducePublisher = reducePub(publisher, 0, (BiFunction<Integer, Integer, Integer>)(a, b) -> a + b);
         // reducePublisher.subscribe(logSub());
 
-        final Publisher<Integer> mapPub = mapPub(publisher, s -> s * 10);
-        mapPub.subscribe(logSub());
+        final Publisher<String> mapPub = mapPub(publisher, s -> "[" + s + ']');
+        // final Publisher<List> listMapPub = mapPub(publisher, Arrays::asList);
 
+        mapPub.subscribe(logSub());
     }
 
     /**
@@ -113,12 +116,14 @@ public class PubSubAndOperator {
         };
     }
 */
-    private static <T> Publisher<T> mapPub(Publisher<T> pub,
-                                           Function<T, T> f) {
-        return new Publisher<T>() {
+
+    // T -> R
+    private static <T, R> Publisher<R> mapPub(Publisher<T> pub,
+                                           Function<T, R> f) {
+        return new Publisher<R>() {
             @Override
-            public void subscribe(Subscriber<? super T> sub) {
-                pub.subscribe(new DelegateSub<T>(sub) {
+            public void subscribe(Subscriber<? super R> sub) {
+                pub.subscribe(new DelegateSub<T, R>(sub) {
                     @Override
                     public void onNext(T item) {
                         sub.onNext(f.apply(item));

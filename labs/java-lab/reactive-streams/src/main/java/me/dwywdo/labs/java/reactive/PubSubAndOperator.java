@@ -52,7 +52,7 @@ public class PubSubAndOperator {
          * Lambda만 쓰면 어떤 타입으로 해석해야 할 지 모르기 때문에 BiFunction으로 캐스팅해주어야 한다.
          * 안해줘도 알아서 해석하긴 할 것이다.
          */
-        final Publisher<String> reducePublisher = reducePub(publisher, "", (BiFunction<String, Integer, String>)(a, b) -> a + '-' + b);
+        final Publisher<StringBuilder> reducePublisher = reducePub(publisher, new StringBuilder(), (a, b) -> a.append(b + ","));
         reducePublisher.subscribe(logSub());
 
         // final Publisher<String> mapPub = mapPub(publisher, s -> "[" + s + ']');

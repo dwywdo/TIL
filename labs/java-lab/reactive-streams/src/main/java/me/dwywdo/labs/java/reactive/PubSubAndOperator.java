@@ -70,18 +70,18 @@ public class PubSubAndOperator {
     /**
      *
      */
-    private static Publisher<String> reducePub(Publisher<Integer> publisher,
-                                                String init,
-                                                BiFunction<String, Integer, String> bf
+    private static <T, R> Publisher<R> reducePub(Publisher<T> publisher,
+                                                R init,
+                                                BiFunction<R, T, R> bf
     ) {
-        return new Publisher<String>() {
+        return new Publisher<R>() {
             @Override
-            public void subscribe(Subscriber<? super String> sub) {
-                publisher.subscribe(new DelegateSub<Integer, String>(sub) {
-                    String result = init;
+            public void subscribe(Subscriber<? super R> sub) {
+                publisher.subscribe(new DelegateSub<T, R>(sub) {
+                    R result = init;
 
                     @Override
-                    public void onNext(Integer item) {
+                    public void onNext(T item) {
                         result = bf.apply(result, item);
                     }
 

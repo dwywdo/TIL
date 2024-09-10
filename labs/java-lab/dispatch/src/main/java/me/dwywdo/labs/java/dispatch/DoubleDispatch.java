@@ -4,38 +4,41 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DoubleDispatch {
+
     interface Post {
-        void postOn(Facebook sns);
-        void postOn(Twitter sns);
+        void postOn(SNS sns);
     }
+
     static class Text implements Post {
         @Override
-        public void postOn(Facebook sns) {
-            System.out.println("Text -> Facebook");
-
-        }
-
-        @Override
-        public void postOn(Twitter sns) {
-            System.out.println("Text -> Twitter");
-
-        }
+        public void postOn(SNS sns) { sns.post(this); }
     }
+
     static class Picture implements Post {
         @Override
-        public void postOn(Facebook sns) {
-            System.out.println("Picture -> Facebook");
-        }
-
-        @Override
-        public void postOn(Twitter sns) {
-            System.out.println("Picture -> Twitter");
-        }
+        public void postOn(SNS sns) { sns.post(this); }
     }
 
-    interface SNS { }
-    static class Facebook implements SNS {}
-    static class Twitter implements SNS {}
+    interface SNS {
+        void post(Text post);
+        void post(Picture post);
+    }
+
+    static class Facebook implements SNS {
+        @Override
+        public void post(Text post) { System.out.println("Text - Facebook"); }
+
+        @Override
+        public void post(Picture post) { System.out.println("Picture - Facebook"); }
+    }
+
+    static class Twitter implements SNS {
+        @Override
+        public void post(Text post) { System.out.println("Text - Twitter"); }
+
+        @Override
+        public void post(Picture post) { System.out.println("Picture - Twitter"); }
+    }
 
     public static void main(String[] args) {
         final List<Post> posts = Arrays.asList(new Text(), new Picture());

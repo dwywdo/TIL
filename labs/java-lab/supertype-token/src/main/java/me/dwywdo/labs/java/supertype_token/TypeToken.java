@@ -1,11 +1,16 @@
 package me.dwywdo.labs.java.supertype_token;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TypeToken {
     static Object create() {
         return new Object();
     }
 
     static <T> T createWithGenerics(Class<T> clazz) throws InstantiationException, IllegalAccessException {
+        // Class<T>의 타입 정보를 정확하게 넘기니까, 별도의 캐스팅을 하지 않고 clazz.newInstance()가 가능하다
+        // return (T)clazz.newInstance();
         return clazz.newInstance();
     }
 
@@ -18,6 +23,22 @@ public class TypeToken {
 
         T get() {
             return value;
+        }
+    }
+
+    /**
+     * 하나의 Map에 여러 종류의 Object (타입) 들을 넣고 싶은 경우
+     */
+    static class TypesafeMap {
+        Map<String, Object> map = new HashMap<>();
+        void run() {
+            map.put("a", "a");
+            map.put("b", 1);
+            // Integer i = map.get("b"); 캐스팅이 필요
+            // 그렇다고 해서 아래처럼 캐스팅하면 매우 위험한 코드. 타입 안전성이 떨어짐
+            // 실행 중 예상하지 못한 에러가 발생하는 경우를 막을 수 없다.
+            final Integer i = (Integer) map.get("b");
+            final String s = (String) map.get("a");
         }
     }
     
@@ -42,5 +63,14 @@ public class TypeToken {
         System.out.println("iGeneric.value = " + iGeneric.value);
 
         System.out.println("iGeneric.value.getClass() = " + iGeneric.value.getClass());
+
+        // 아래 코드는 캐스팅을 잘못 사용해서 컴파일은 되는 것처럼 보이지만, 런타임에서 문제가 발생
+        // ClassCastException이 발생한다.
+        /*
+        final Object stringObject = "String";
+        final Integer i = (Integer) stringObject;
+        System.out.println("i = " + i);
+        */
+
     }
 }

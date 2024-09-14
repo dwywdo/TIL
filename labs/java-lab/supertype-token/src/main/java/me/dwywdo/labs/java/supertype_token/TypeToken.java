@@ -30,15 +30,10 @@ public class TypeToken {
      * 하나의 Map에 여러 종류의 Object (타입) 들을 넣고 싶은 경우
      */
     static class TypesafeMap {
-        Map<String, Object> map = new HashMap<>();
-        void run() {
-            map.put("a", "a");
-            map.put("b", 1);
-            // Integer i = map.get("b"); 캐스팅이 필요
-            // 그렇다고 해서 아래처럼 캐스팅하면 매우 위험한 코드. 타입 안전성이 떨어짐
-            // 실행 중 예상하지 못한 에러가 발생하는 경우를 막을 수 없다.
-            final Integer i = (Integer) map.get("b");
-            final String s = (String) map.get("a");
+        Map<Class<?>, Object> map = new HashMap<>();
+
+        void put(Class<?> clazz, Object value) {
+            map.put(clazz, value);
         }
     }
     
@@ -72,5 +67,8 @@ public class TypeToken {
         System.out.println("i = " + i);
         */
 
+        final TypesafeMap m = new TypesafeMap();
+        m.put(String.class, "Value");
+        m.put(Integer.class, "Value"); // Integer 타입의 키에는 Integer만 들어가기를 원하는데.. 이것도 허용이 되어버린다
     }
 }

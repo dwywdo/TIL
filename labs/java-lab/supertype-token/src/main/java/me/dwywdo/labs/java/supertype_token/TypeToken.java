@@ -1,6 +1,8 @@
 package me.dwywdo.labs.java.supertype_token;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TypeToken {
@@ -32,8 +34,14 @@ public class TypeToken {
     static class TypesafeMap {
         Map<Class<?>, Object> map = new HashMap<>();
 
-        void put(Class<?> clazz, Object value) {
+        <T> void put(Class<T> clazz, T value) {
             map.put(clazz, value);
+        }
+
+        <T> T get(Class<T> clazz) {
+            // return (T).map.get(clazz);는 Typesafe한 방법이 아니다
+            // clazz.case();는 타입 캐스팅을 명시적으로 해줄 수 있다.
+            return clazz.cast(map.get(clazz));
         }
     }
     
@@ -69,6 +77,10 @@ public class TypeToken {
 
         final TypesafeMap m = new TypesafeMap();
         m.put(String.class, "Value");
-        m.put(Integer.class, "Value"); // Integer 타입의 키에는 Integer만 들어가기를 원하는데.. 이것도 허용이 되어버린다
+        m.put(Integer.class, 1); // 이제 해당 타입에 맞는 값을 잘 넣을 수 있다 Typesafe하게!
+        m.put(List.class, Arrays.asList(1, 2, 3));
+
+        final String s1 = m.get(String.class);
+        System.out.println("s1 = " + s1);
     }
 }

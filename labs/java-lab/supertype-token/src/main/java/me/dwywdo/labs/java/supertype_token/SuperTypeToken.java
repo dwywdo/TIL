@@ -2,12 +2,64 @@ package me.dwywdo.labs.java.supertype_token;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class SuperTypeToken {
     // NESTED STATIC CLASS = INNER CLASS???
     static class Sup<T> {
         T value;
+    }
+
+    /**
+     * 하나의 Map에 여러 종류의 Object (타입) 들을 넣고 싶은 경우
+     */
+    static class TypesafeMap {
+        Map<TypeReference<?>, Object> map = new HashMap<>();
+
+        <T> void put(TypeReference<T> tr, T value) {
+            map.put(tr, value);
+        }
+
+        <T> T get(TypeReference<T> tr) {
+            // return (T).map.get(clazz);는 Typesafe한 방법이 아니다
+            // clazz.case();는 타입 캐스팅을 명시적으로 해줄 수 있다.
+            if (tr.type instanceof Class<?>) {
+                return ((Class<T>)tr.type).cast(map.get(tr)); // TypeReference<String>으로 던질때는 문제가 없다. 하지만 List<String>은 동작하지 않는다.
+            } else {
+                return ((Class<T>)((ParameterizedType)tr.type).getRawType()).cast(map.get(tr)); // TypeReference<List<String>
+            }
+        }
+    }
+
+    static class TypeReference<T> { // Sup
+        Type type;
+
+        public TypeReference() {
+            final Type stype = getClass().getGenericSuperclass();
+            if (stype instanceof ParameterizedType) {
+                this.type = ((ParameterizedType) stype).getActualTypeArguments()[0];
+            } else throw new RuntimeException();
+        }
+
+        // hashCode를 같이 정의해줘야 더 빠르게 할 수 있다.
+        // equals도 정의해주자
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {return true;}
+            if (o == null || getClass().getSuperclass() != o.getClass().getSuperclass()) {return false;}
+            final TypeReference<?> that = (TypeReference<?>) o;
+            return Objects.equals(type, that.type);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(type);
+        }
     }
 
     public static void main(String[] args) throws NoSuchFieldException {
@@ -48,5 +100,26 @@ public class SuperTypeToken {
         Type sbt = sb.getClass().getGenericSuperclass();
         ParameterizedType sbptype = (ParameterizedType) sbt;
         System.out.println("ptype.getActualTypeArguments() = " + sbptype.getActualTypeArguments()[0]);
+
+        // 아래는 RuntimeException. 왜냐면 TypeReference<String>의 String은 사라지니까 ParameterizedType이 아니다.
+        // TypeReference tref = new TypeReference<String>();
+        // System.out.println("tref.type = " + tref.type);
+
+        // 아래처럼 익명클래스를 이용한 방식을 쓰면 타입을 가져오는 것이 가능하다!!
+        TypeReference tref = new TypeReference<String>() {};
+        System.out.println("tref.type = " + tref.type);
+
+        // TypesafeMap을 다시 수정해보면...!
+        final TypesafeMap m = new TypesafeMap();
+        m.put(new TypeReference<Integer>() {} , 1);
+        m.put(new TypeReference<String>() {} , "String");
+        m.put(new TypeReference<List<Integer>>() {}, Arrays.asList(1, 2, 3));
+        m.put(new TypeReference<List<String>>() {}, Arrays.asList("a", "b", "c"));
+
+        System.out.println("m.get(new TypeReference<Integer>() {}) = " + m.get(new TypeReference<Integer>() {}));
+        System.out.println("m.get(new TypeReference<String>() {}) = " + m.get(new TypeReference<String>() {}));
+        System.out.println("m.get(new TypeReference<List<Integer>>() {}) = " + m.get(new TypeReference<List<Integer>>() {}));
+        System.out.println("m.get(new TypeReference<List<String>>() {}) = " + m.get(new TypeReference<List<String>>() {}));
+
     }
 }

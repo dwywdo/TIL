@@ -5,16 +5,9 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 public class SuperTypeToken {
+    // NESTED STATIC CLASS = INNER CLASS???
     static class Sup<T> {
         T value;
-    }
-
-    static class Sub extends Sup<String> {
-
-    }
-
-    static class SubNested extends Sup<List<String>> {
-
     }
 
     public static void main(String[] args) throws NoSuchFieldException {
@@ -27,10 +20,17 @@ public class SuperTypeToken {
         // Runtime 시에 이 정보가 Erasure에 의해 싹 사라져버리기 때문
         // 즉, Sup s = new Sup<>(); 으로 정의했던 경우랑 결과가 같음
 
+        // LOCAL CLASS도 바꾸어도 똑같이 적용된다.
+        // 하지만 메서드 안에서 한 번만 사용하는 것이기 때문에, 굳이 이것을 이름까지 주지 않아도 되지 않나?
+        // 이름을 생각하면 ANONYMOUS CLASS로도 가능하지 않나? 그렇다! 아래에서는 Sub를 익명 클래스로 만들어보았다.
+
+        // 순수한 익명 클래스가 되었다. 이 코드 자체가 내부적으로 임의의 클래스를 만들어 인스턴스를 하나 만들고 b에 어싸인한다.
+        Sup b = new Sup<String>() {};
+
+        class SubNested extends Sup<List<String>> {}
 
         // 오브젝트 선언하는 곳에서 타입을 준 게 아니고, 상속하는 시점에서 타입이 정해진 경우
         // 가져올 수 있다.
-        final Sub b = new Sub();
         Type t = b.getClass().getGenericSuperclass();
         // Sup<String>과 같은 것을 ParameterizedType이라 부른다.
         ParameterizedType ptype = (ParameterizedType) t;

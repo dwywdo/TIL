@@ -78,9 +78,19 @@ public class TypeToken {
         final TypesafeMap m = new TypesafeMap();
         m.put(String.class, "Value");
         m.put(Integer.class, 1); // 이제 해당 타입에 맞는 값을 잘 넣을 수 있다 Typesafe하게!
-        m.put(List.class, Arrays.asList(1, 2, 3));
+        m.put(List.class, Arrays.asList(1, 2, 3)); // List<Integer>
+        m.put(List.class, Arrays.asList("a", "b", "c")); // 덮어씌워져 버린다. 나는 List<String>을 별도로 넣고 싶은 건데...
+        /**
+         * 그렇다고 해서 아래처럼 작성하면 에러가 난다
+         * m.put(List<Integer>.class, Arrays.asList(1,2,3));
+         * Compile Error Message: Cannot select from parameterized type
+         * Class literal로 클래스에 대한 클래스 오브젝트를 가져올 때, 타입 파라미터를 적용해서 구분되어서 가져올 수는 없다 ㅠㅠ
+         * Class라는 타입에는 Generic에 대한 타입 변수 정보가 없기 때문이다...
+         */
 
         final String s1 = m.get(String.class);
         System.out.println("s1 = " + s1);
+
+        System.out.println("m.get(List.class) = " + m.get(List.class));
     }
 }
